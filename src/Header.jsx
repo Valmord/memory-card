@@ -1,10 +1,11 @@
 import Score from "./Score";
 
-const Header = function Header({ score }) {
+const Header = function Header({ score, bestScore }) {
   return (
     <header>
       <h1>Memory Card Game</h1>
-      <Score score={score} />
+      <small>Featuring Might Guy, the best Guy</small>
+      <Score score={score} bestScore={bestScore} />
     </header>
   );
 };

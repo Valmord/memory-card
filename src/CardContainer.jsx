@@ -34,7 +34,12 @@ const getCharacterImage = async function getCharacterImage(data, name) {
   console.log("nothing");
 };
 
-const CardContainer = function CardContainer({ setScore }) {
+const CardContainer = function CardContainer({
+  score,
+  setScore,
+  bestScore,
+  setBestScore,
+}) {
   const [cardData, setCardData] = useState(
     Array(narutoCharacters.length).fill({
       name: "Temp",
@@ -76,6 +81,7 @@ const CardContainer = function CardContainer({ setScore }) {
     } else {
       setCardsClicked([...cardsClicked, character]);
       setScore((score) => score + 1);
+      if (score + 1 > bestScore) setBestScore(score + 1);
     }
   };
 

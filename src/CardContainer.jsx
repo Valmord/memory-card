@@ -8,7 +8,6 @@ const getAnimeCharacters = async function getAnimeCharacters() {
       `https://api.jikan.moe/v4/anime/1735/characters`
     );
     const data = await response.json();
-    console.log(data);
     if (response.ok) {
       return data;
     }
@@ -18,7 +17,7 @@ const getAnimeCharacters = async function getAnimeCharacters() {
   }
 };
 
-const formatName = function formatName(name) {
+const formatName = function formatNameForSearch(name) {
   const [first, last] = name.split(" ");
   if (!last) return first;
   return last + ", " + first;
@@ -26,10 +25,8 @@ const formatName = function formatName(name) {
 
 const getCharacterImage = async function getCharacterImage(data, name) {
   const formattedName = formatName(name);
-  console.log(formattedName);
   for (let i = 0; i < data.length; i++) {
     const char = data[i].character;
-    console.log(char.name);
     if (char.name === formattedName) {
       return char.images.jpg.image_url;
     }
@@ -37,32 +34,49 @@ const getCharacterImage = async function getCharacterImage(data, name) {
   console.log("nothing");
 };
 
-const CardContainer = function CardContainer() {
+const CardContainer = function CardContainer({ setScore }) {
   const [cardData, setCardData] = useState(
     Array(narutoCharacters.length).fill({
       name: "Temp",
-      image: "",
+      image: null,
     })
   );
+  const [cardsClicked, setCardsClicked] = useState([]);
   const hasFetched = useRef(false);
 
   const fetchCharacterImages = async function fetchCharacterImages() {
     const images = [];
-    const response = await getAnimeCharacters();
-    console.log(response.data);
 
-    for (let i = 0; i < narutoCharacters.length; i++) {
-      const name = narutoCharacters[i].name;
+    try {
+      const response = await getAnimeCharacters();
 
-      const imageURL = await getCharacterImage(response.data, name);
+      for (let i = 0; i < narutoCharacters.length; i++) {
+        const name = narutoCharacters[i].name;
 
-      images.push({
-        name,
-        image: imageURL,
-      });
+        const imageURL = await getCharacterImage(response.data, name);
+
+        images.push({
+          name,
+          image: imageURL,
+        });
+      }
+
+      return images;
+    } catch (err) {
+      console.error(err);
     }
+  };
 
-    return images;
+  const handleCardClick = function handleCardClick(e) {
+    const character = e.currentTarget.dataset.name;
+
+    if (cardsClicked.includes(character)) {
+      setCardsClicked([]);
+      setScore(0);
+    } else {
+      setCardsClicked([...cardsClicked, character]);
+      setScore((score) => score + 1);
+    }
   };
 
   useEffect(() => {
@@ -74,9 +88,15 @@ const CardContainer = function CardContainer() {
 
   return (
     <main className="card-container">
-      {cardData.map((data) => {
-        console.log("data", data);
-        return <Card data={data} key={crypto.randomUUID()} />;
+      {cardData.map((data, index) => {
+        return (
+          <Card
+            data={data}
+            key={index}
+            order={Math.floor(Math.random() * 15)}
+            handleClick={handleCardClick}
+          />
+        );
       })}
     </main>
   );

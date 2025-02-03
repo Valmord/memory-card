@@ -17,4 +17,9 @@ header {
   background-color: var(--header-color);
   border-bottom: 2px solid var(--border-color);
   padding: 20px;
+  display: flex;
+  align-items: center;
+}
+.score-container {
+  margin-left: auto;
 }

@@ -5,10 +5,11 @@ import Header from "./Header";
 import CardContainer from "./CardContainer";
 
 function App() {
+  const [score, setScore] = useState(0);
   return (
     <>
-      <Header />
-      <CardContainer />
+      <Header score={score} />
+      <CardContainer setScore={setScore} />
     </>
   );
 }
